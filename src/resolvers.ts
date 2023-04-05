@@ -1,30 +1,32 @@
-import User from './models/user';
+import { User, UserModel } from './models/user';
 
-export const resolvers = {
+const resolvers = {
   Query: {
-    async users() {
-      const users = await User.findAll();
-      return users;
-    },
-    async user(parent: any, { id }: any) {
-      const user = await User.findByPk(id);
+    getUser: async ({ id }: { id: string }) => {
+      const user = await UserModel.findById(id).exec();
       return user;
+    },
+    getUsers: async () => {
+      const users = await UserModel.find().exec();
+      return users;
     },
   },
   Mutation: {
-    async createUser(parent: any, { name, email }: any) {
-      const user = await User.create({ name, email });
+    createUser: async ({ email, name }: User) => {
+      const user = await UserModel.create({ email, name });
       return user;
     },
-    async updateUser(parent: any, { id, name, email }: any) {
-      const user = await User.findByPk(id);
-      await user.update({ name, email });
+    updateUser: async ({ id, input }: { id: string; input: User }) => {
+      const user = await UserModel.findByIdAndUpdate(id, input, {
+        new: true,
+      }).exec();
       return user;
     },
-    async deleteUser(parent: any, { id }: any) {
-      const user = await User.findByPk(id);
-      await user.destroy();
-      return true;
+    deleteUser: async ({ id }: { id: string }) => {
+      const user = await UserModel.findByIdAndDelete(id).exec();
+      return user;
     },
   },
 };
+
+export { resolvers };

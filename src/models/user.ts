@@ -1,10 +1,16 @@
-import { Model, Column, Table } from 'sequelize-typescript';
+import { prop, getModelForClass } from '@typegoose/typegoose';
 
-@Table
-export default class User extends Model<User> {
-  @Column
-  name!: string;
+class User {
+  @prop({ required: true })
+  public name!: string;
 
-  @Column
-  email!: string;
+  @prop({ required: true, unique: true })
+  public email!: string;
+
+  @prop({ required: true, unique: true })
+  public id!: string;
 }
+
+const UserModel = getModelForClass(User);
+
+export { User, UserModel };

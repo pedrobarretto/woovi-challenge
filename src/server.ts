@@ -2,10 +2,13 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import { resolvers } from './resolvers';
+import { connect } from './mongo';
 import { typeDefs } from './schema';
-import { sequelize } from './sequelize';
 
 async function startApolloServer() {
+
+  connect();
+
   // create the Apollo Server instance
   const server = new ApolloServer({
     schema: makeExecutableSchema({
@@ -15,10 +18,6 @@ async function startApolloServer() {
   });
 
   const app = express();
-
-  // sync the Sequelize models with the database
-  await sequelize.sync();
-  console.log('Database synced');
 
   await server.start();
 
