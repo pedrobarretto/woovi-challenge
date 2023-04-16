@@ -1,4 +1,5 @@
 import { User, UserModel } from './models/user';
+import { v4 as uuid } from 'uuid';
 
 const resolvers = {
   Query: {
@@ -7,14 +8,15 @@ const resolvers = {
       return user;
     },
     getUsers: async () => {
-      const users = await UserModel.find().exec();
+      const users = await UserModel.find({});
       return users;
     },
   },
   Mutation: {
-    createUser: async ({ email, name }: User) => {
-      const user = await UserModel.create({ email, name });
-      return user;
+    createUser: async (_, { user }: { user: { name: string, email: string } }) => {
+      const id = uuid();
+      const createdUser = await UserModel.create({ ...user, id });
+      return createdUser;
     },
     updateUser: async ({ id, input }: { id: string; input: User }) => {
       const user = await UserModel.findByIdAndUpdate(id, input, {
