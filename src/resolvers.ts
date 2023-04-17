@@ -3,31 +3,31 @@ import { v4 as uuid } from 'uuid';
 
 const resolvers = {
   Query: {
-    getUser: async ({ id }: { id: string }) => {
-      const user = await UserModel.findById(id).exec();
+    getUser: async (_, { userId }: { userId: string }) => {
+      const user = await UserModel.findOne({ userId });
       return user;
     },
     getUsers: async () => {
       const users = await UserModel.find({});
       return users;
-    },
+    }
   },
   Mutation: {
     createUser: async (_, { user }: { user: { name: string, email: string } }) => {
       const id = uuid();
-      const createdUser = await UserModel.create({ ...user, id });
+      const createdUser = await UserModel.create({ ...user, userId: id });
       return createdUser;
     },
-    updateUser: async ({ id, input }: { id: string; input: User }) => {
-      const user = await UserModel.findByIdAndUpdate(id, input, {
+    updateUser: async (_, { userId, input }: { userId: string; input: { name: string, email: string } }) => {
+      const user = await UserModel.findOneAndUpdate({ userId }, input, {
         new: true,
       }).exec();
       return user;
     },
-    deleteUser: async ({ id }: { id: string }) => {
-      const user = await UserModel.findByIdAndDelete(id).exec();
+    deleteUser: async (_, { userId }: { userId: string }) => {
+      const user = await UserModel.findOneAndDelete({ userId }).exec();
       return user;
-    },
+    }
   },
 };
 

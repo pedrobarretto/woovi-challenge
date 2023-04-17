@@ -8,7 +8,7 @@ class User {
   public email!: string;
 
   @prop({ required: true, unique: true })
-  public id!: string;
+  public userId!: string;
 }
 
 const UserModel = getModelForClass(User);
